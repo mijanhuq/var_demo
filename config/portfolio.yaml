@@ -1,0 +1,195 @@
+# Portfolio configuration — 25 single-name equity underlyings
+#
+# Underlyings are synthetic names mapped to realistic sector characteristics.
+# Actual option positions are generated programmatically by portfolio/portfolio.py
+# using the position_rules below.
+#
+# TODO (Phase 1 hardening): support explicit per-leg position overrides here
+#       so a desk can specify exact strikes/maturities/quantities for each option.
+
+# ---------------------------------------------------------------------------
+# 1. Underlyings
+# ---------------------------------------------------------------------------
+# Format: name, sector, S0 (initial price hint — overridden by generator),
+#         notional_per_contract (USD), max_contracts_per_leg
+#
+# The generator samples S0 from sector-specific ranges; these values are
+# informational only and used by the portfolio builder for contract sizing.
+
+underlyings:
+  # Technology (5)
+  - ticker: TECH_01
+    sector: Technology
+    s0_hint: 180.00
+    notional_per_contract: 100   # 1 contract = 100 shares
+  - ticker: TECH_02
+    sector: Technology
+    s0_hint: 250.00
+    notional_per_contract: 100
+  - ticker: TECH_03
+    sector: Technology
+    s0_hint: 130.00
+    notional_per_contract: 100
+  - ticker: TECH_04
+    sector: Technology
+    s0_hint: 200.00
+    notional_per_contract: 100
+  - ticker: TECH_05
+    sector: Technology
+    s0_hint: 290.00
+    notional_per_contract: 100
+
+  # Financials (5)
+  - ticker: FINL_01
+    sector: Financials
+    s0_hint: 90.00
+    notional_per_contract: 100
+  - ticker: FINL_02
+    sector: Financials
+    s0_hint: 140.00
+    notional_per_contract: 100
+  - ticker: FINL_03
+    sector: Financials
+    s0_hint: 60.00
+    notional_per_contract: 100
+  - ticker: FINL_04
+    sector: Financials
+    s0_hint: 120.00
+    notional_per_contract: 100
+  - ticker: FINL_05
+    sector: Financials
+    s0_hint: 75.00
+    notional_per_contract: 100
+
+  # Healthcare (5)
+  - ticker: HLTH_01
+    sector: Healthcare
+    s0_hint: 160.00
+    notional_per_contract: 100
+  - ticker: HLTH_02
+    sector: Healthcare
+    s0_hint: 85.00
+    notional_per_contract: 100
+  - ticker: HLTH_03
+    sector: Healthcare
+    s0_hint: 195.00
+    notional_per_contract: 100
+  - ticker: HLTH_04
+    sector: Healthcare
+    s0_hint: 110.00
+    notional_per_contract: 100
+  - ticker: HLTH_05
+    sector: Healthcare
+    s0_hint: 140.00
+    notional_per_contract: 100
+
+  # Energy (5)
+  - ticker: ENGY_01
+    sector: Energy
+    s0_hint: 65.00
+    notional_per_contract: 100
+  - ticker: ENGY_02
+    sector: Energy
+    s0_hint: 100.00
+    notional_per_contract: 100
+  - ticker: ENGY_03
+    sector: Energy
+    s0_hint: 50.00
+    notional_per_contract: 100
+  - ticker: ENGY_04
+    sector: Energy
+    s0_hint: 85.00
+    notional_per_contract: 100
+  - ticker: ENGY_05
+    sector: Energy
+    s0_hint: 115.00
+    notional_per_contract: 100
+
+  # Consumer (5)
+  - ticker: CONS_01
+    sector: Consumer
+    s0_hint: 220.00
+    notional_per_contract: 100
+  - ticker: CONS_02
+    sector: Consumer
+    s0_hint: 150.00
+    notional_per_contract: 100
+  - ticker: CONS_03
+    sector: Consumer
+    s0_hint: 280.00
+    notional_per_contract: 100
+  - ticker: CONS_04
+    sector: Consumer
+    s0_hint: 100.00
+    notional_per_contract: 100
+  - ticker: CONS_05
+    sector: Consumer
+    s0_hint: 175.00
+    notional_per_contract: 100
+
+# ---------------------------------------------------------------------------
+# 2. Systematic position rules
+# ---------------------------------------------------------------------------
+# The portfolio builder generates option legs by applying these rules to every
+# underlying. 'quantity' is number of contracts (+ve = long, -ve = short).
+# Moneyness = K/S_current at portfolio construction date.
+#
+# TODO: allow per-ticker overrides on top of these rules.
+
+position_rules:
+  # Long OTM puts — downside protection
+  - option_type: put
+    moneyness: 0.95
+    tenor: "3m"
+    quantity: 50
+
+  - option_type: put
+    moneyness: 0.85
+    tenor: "6m"
+    quantity: 25
+
+  # Short OTM calls — yield enhancement / covered call overlay
+  - option_type: call
+    moneyness: 1.05
+    tenor: "3m"
+    quantity: -30
+
+  # Long ATM straddles — selected underlyings only (applied to Technology and Energy)
+  # TODO: implement sector-scoped position rules
+  - option_type: call
+    moneyness: 1.00
+    tenor: "1m"
+    quantity: 20
+    sectors: [Technology, Energy]   # rule applies to these sectors only
+
+  - option_type: put
+    moneyness: 1.00
+    tenor: "1m"
+    quantity: 20
+    sectors: [Technology, Energy]
+
+  # Long 12m calls — long-dated upside exposure
+  - option_type: call
+    moneyness: 1.05
+    tenor: "12m"
+    quantity: 15
+
+# ---------------------------------------------------------------------------
+# 3. Index overlay
+# ---------------------------------------------------------------------------
+# A synthetic equal-weighted broad-market index is constructed from the 25
+# underlyings. The overlay adds tail-hedge long calls on this index.
+
+index_overlay:
+  enabled: true
+  index_name: "SYNTH_INDEX"
+  weights: equal                 # equal-weighted across all 25 underlyings
+  positions:
+    - option_type: call
+      moneyness: 1.05
+      tenor: "3m"
+      quantity: 100
+    - option_type: call
+      moneyness: 1.05
+      tenor: "6m"
+      quantity: 100

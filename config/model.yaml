@@ -1,0 +1,30 @@
+# Historical VaR Model — configuration
+# All time units: trading days unless noted. Rates: annualised decimals.
+
+simulation:
+  seed: 42
+  n_trading_days: 1510        # ~6 years of trading days
+  start_date: "2018-01-02"
+
+market:
+  risk_free_rate: 0.05        # 5% annualised, constant (Phase 1)
+
+var:
+  lookback_window: 252        # 1 year
+  confidence_levels: [0.95, 0.99]
+  holding_period: 1           # days
+
+backtest:
+  window_days: 756            # ~3 years rolling backtest
+
+crisis:
+  inject: true
+  start_day: 630              # ~year 2.5 of the simulation
+  end_day: 882                # 252-day crisis window (~year 3.5)
+  # Severity parameters are hardcoded in data/generator.py (CRISIS_MU, CRISIS_VOL_MULTIPLIER)
+
+reporting:
+  output_dir: "output"
+  save_figures: true
+  figure_format: "png"        # "png" or "pdf"
+  dpi: 150
