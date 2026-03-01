@@ -1,5 +1,7 @@
 # var_demo — Historical VAR Model for an Equities Options Portfolio
 
+![Historical VAR Flow](docs/images/HistVarFlow2.png)
+
 A fully working, test-driven Historical Simulation Value-at-Risk (HS-VAR) engine for a
 portfolio of European equity options. Built end-to-end using **AI-assisted coding** as a
 demonstration of how a human quant and an AI pair-programmer can collaborate to deliver a
@@ -333,3 +335,32 @@ print(result["var_99_1d"], result["es_99_1d"])
 
 *Built in ~3 hours using Claude Code as an AI pair-programmer.*
 *All 138 active tests pass. Pending MRM sign-off before production use.*
+
+## Disclaimer
+Code and implementation contained within this repo were done for demonstration purposes only.
+
+---
+
+## License
+
+MIT License
+
+Copyright (c) 2026 var_demo contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
