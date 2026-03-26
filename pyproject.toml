@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "var_demo"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = [
+    "network: marks tests that require internet access (deselect with -m 'not network')",
+    "slow: marks tests that are slow to run",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
